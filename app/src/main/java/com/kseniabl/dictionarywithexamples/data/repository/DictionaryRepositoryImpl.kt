@@ -43,7 +43,7 @@ class DictionaryRepositoryImpl @Inject constructor(
 
 inline fun <R,T> processData(
     crossinline data: suspend () -> Response<R>,
-    crossinline mapper: (R) -> ArrayList<T>
+    crossinline mapper: (R) -> List<T>
 ) = flow {
     emit(ResultModel.Loading())
     val response = data()

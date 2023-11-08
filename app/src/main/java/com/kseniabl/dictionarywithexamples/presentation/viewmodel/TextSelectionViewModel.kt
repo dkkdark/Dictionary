@@ -28,10 +28,10 @@ class TextSelectionViewModel @Inject constructor(
     private val _translation = MutableStateFlow(TranslationEntity(""))
     val translation = _translation.asStateFlow()
 
-    private val _definition = MutableStateFlow<ArrayList<DefinitionEntity>>(arrayListOf())
+    private val _definition = MutableStateFlow<List<DefinitionEntity>>(listOf())
     val definition = _definition.asStateFlow()
 
-    private val _synonym = MutableStateFlow<ArrayList<WordEntity>>(arrayListOf())
+    private val _synonym = MutableStateFlow<List<WordEntity>>(listOf())
     val synonym = _synonym.asStateFlow()
 
     private val _states = MutableSharedFlow<TextSelectionStates>()
@@ -41,14 +41,12 @@ class TextSelectionViewModel @Inject constructor(
         val translation = googleTranslationUseCase(word)
         translation.collect {
             it.processModel { _translation }
-            Log.e("qqq", "viewmodel translation $it")
         }
     }
 
     private fun getSynonym(word: String) = viewModelScope.launch {
         val synonym = loadSynonymsUseCase(word)
         synonym.collect {
-            Log.e("qqq", "viewmodel synonym $it")
             it.processModel { _synonym }
         }
     }
@@ -57,7 +55,6 @@ class TextSelectionViewModel @Inject constructor(
         val definition = loadDefinitionUseCase(word)
         definition.collect {
             it.processModel { _definition }
-            Log.e("qqq", "viewmodel definition $it")
         }
     }
 
@@ -66,7 +63,7 @@ class TextSelectionViewModel @Inject constructor(
             is TextSelectionEvent.GetInfoForWord -> {
                 getInfoForWord(event.word)
                 getDefinition(event.word)
-                //getSynonym(event.word)
+                getSynonym(event.word)
             }
         }
     }

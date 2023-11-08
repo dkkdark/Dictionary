@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.Flow
 import java.util.ArrayList
 
 interface DictionaryRepository {
-    suspend fun getDefinition(word: String): Flow<ResultModel<ArrayList<DefinitionEntity>>>
-    suspend fun getSynonym(word: String): Flow<ResultModel<ArrayList<WordEntity>>>
+    suspend fun getDefinition(word: String): Flow<ResultModel<List<DefinitionEntity>>>
+    suspend fun getSynonym(word: String): Flow<ResultModel<List<WordEntity>>>
     fun translateWithGoogle(text: String): Flow<ResultModel<TranslationEntity>>
 }
