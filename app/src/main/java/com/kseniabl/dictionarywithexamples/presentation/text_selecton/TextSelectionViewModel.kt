@@ -1,6 +1,5 @@
-package com.kseniabl.dictionarywithexamples.presentation.viewmodel
+package com.kseniabl.dictionarywithexamples.presentation.text_selecton
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kseniabl.dictionarywithexamples.domain.model.DefinitionEntity

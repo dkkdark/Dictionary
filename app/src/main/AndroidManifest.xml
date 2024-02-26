@@ -18,7 +18,7 @@
         tools:targetApi="34"
         android:name=".presentation.App">
         <activity
-            android:name=".presentation.MainActivity"
+            android:name=".presentation.main.MainActivity"
             android:exported="true"
             android:theme="@style/Theme.DictionaryWithExamples">
             <intent-filter>
@@ -27,7 +27,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".presentation.TextSelectionActivity"
+            android:name=".presentation.text_selecton.TextSelectionActivity"
             android:exported="true"
             android:label="Dictionary"
             android:windowSoftInputMode="adjustResize"
