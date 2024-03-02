@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kseniabl.dictionarywithexamples.R
 import com.kseniabl.dictionarywithexamples.domain.model.WordListModel
+import com.kseniabl.dictionarywithexamples.presentation.common.DictionaryFloatingButton
 import com.kseniabl.dictionarywithexamples.ui.theme.DictionaryWithExamplesTheme
 
 @Composable
@@ -53,29 +54,7 @@ fun MainScreen(
             }
         }
         Spacer(modifier = Modifier.weight(1F))
-        ExtendedFloatingActionButton(
-            modifier = Modifier
-                .padding(10.dp)
-                .align(Alignment.End),
-            onClick = { /*TODO*/ },
-            containerColor = MaterialTheme.colorScheme.secondary
-        ) {
-            Row {
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onBackground
-                )
-                Text(
-                    text = stringResource(R.string.word).uppercase(),
-                    style = TextStyle(
-                        color = MaterialTheme.colorScheme.onBackground,
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.Black
-                    )
-                )
-            }
-        }
+        DictionaryFloatingButton(stringResource(R.string.word))
     }
 }
 

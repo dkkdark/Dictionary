@@ -5,10 +5,17 @@ import androidx.compose.ui.graphics.Color
 val AccentColor = Color(0xFF9B6F6F)
 val Pink80 = Color(0xFF554A6A)
 
-val DarkOnBackground = Color(0xFFCFCFCF)
-val DarkPink = Color(0xFF383146)
-val DarkBackground = Color(0xFF2C2638)
+val DarkOnBackground = Color(0xFFe2e2e9)
+val BaseContainer = Color(0xFF1D2024)
+val DarkBackground = Color(0xFF111318)
 
+val Primary = Color(0xFFAAC7FF)
+val OnPrimary = Color(0xFF0A305F)
+
+val ContainerOne = Color(0xFF004D68)
+val ContainerTwo = Color(0xFF284777)
+val ContainerThree = Color(0xFF573E5C)
+val ContainerFour = Color(0xFF4C3E75)
 
 val Purple40 = Color(0xFF6650a4)
 val PurpleGrey40 = Color(0xFF625b71)
