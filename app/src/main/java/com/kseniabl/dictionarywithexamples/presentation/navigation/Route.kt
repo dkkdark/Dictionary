@@ -6,4 +6,7 @@ import com.kseniabl.dictionarywithexamples.R
 
 sealed class Route(val route: String, @StringRes val resourceId: Int, @DrawableRes val icon: Int) {
     object MainRoute: Route("main_route", R.string.main, R.drawable.world)
+
 }
+
+val ListCreationScreen = "list_creation_screen"

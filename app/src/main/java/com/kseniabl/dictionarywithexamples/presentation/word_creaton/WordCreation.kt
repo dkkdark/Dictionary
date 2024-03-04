@@ -1,5 +1,11 @@
 package com.kseniabl.dictionarywithexamples.presentation.word_creaton
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOut
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -21,6 +27,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -70,13 +77,14 @@ fun CreateWord() {
     var addWordItemPadding by remember {
         mutableStateOf(0.dp)
     }
+    val density = LocalDensity.current
 
     ConstraintLayout(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
     ) {
-        val (searchWord, column) = createRefs()
+        val (searchWord, column, fab) = createRefs()
 
         Column(
             modifier = Modifier.constrainAs(column) { top.linkTo(searchWord.bottom) }
@@ -106,6 +114,14 @@ fun CreateWord() {
                 )
             )
         }
+        Column(
+            modifier = Modifier.constrainAs(fab) {
+                bottom.linkTo(parent.bottom)
+                end.linkTo(parent.end)
+            }
+        ) {
+            DictionaryFloatingButton(text = "Добавить")
+        }
         if (wordsItemsVisible) {
             Box(
                 modifier = Modifier
@@ -118,8 +134,12 @@ fun CreateWord() {
             wordsItemsVisible = !wordsItemsVisible
         }, onSizeChanged = {
             addWordItemPadding = it - 14.dp
-        })
-        if (wordsItemsVisible) {
+        }, wordsItemsVisible)
+        AnimatedVisibility(
+            visible = wordsItemsVisible,
+            enter = slideInVertically { with(density) { (addWordItemPadding-80.dp).roundToPx() } } + fadeIn(initialAlpha = 0.3F),
+            exit = slideOutVertically { with(density) { (addWordItemPadding-80.dp).roundToPx() } } + fadeOut()
+        ) {
             AddWordsItems(addWordItemPadding)
         }
     }
@@ -230,6 +250,7 @@ fun ConstraintLayoutScope.DictionaryTextField(
     ref: ConstrainedLayoutReference,
     onClick: () -> Unit,
     onSizeChanged: (Dp) -> Unit,
+    wordsItemsVisible: Boolean
 ) {
     var text by remember {
         mutableStateOf("")
@@ -302,7 +323,7 @@ fun ConstraintLayoutScope.DictionaryTextField(
                     shape = RoundedCornerShape(12.dp),
                 ) {
                     Icon(
-                        imageVector = Icons.Default.Add,
+                        imageVector = if (!wordsItemsVisible) Icons.Default.Add else Icons.Default.KeyboardArrowDown,
                         contentDescription = null,
                         tint = MaterialTheme.colorScheme.onPrimary
                     )

@@ -21,11 +21,11 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-    @OptIn(ExperimentalMaterial3Api::class)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            DictionaryWithExamplesTheme {
+            DictionaryWithExamplesTheme(darkTheme = true) {
                 val navHost = rememberNavController()
                 Surface(
                     modifier = Modifier.fillMaxSize(),

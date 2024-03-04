@@ -2,7 +2,9 @@ package com.kseniabl.dictionarywithexamples.presentation.common
 
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.ExtendedFloatingActionButton
@@ -28,7 +30,7 @@ fun ColumnScope.DictionaryFloatingButton(
             .padding(10.dp)
             .align(Alignment.End),
         onClick = { /*TODO*/ },
-        containerColor = MaterialTheme.colorScheme.secondary
+        containerColor = MaterialTheme.colorScheme.primary
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically
@@ -36,12 +38,13 @@ fun ColumnScope.DictionaryFloatingButton(
             Icon(
                 imageVector = Icons.Default.Add,
                 contentDescription = null,
-                tint = MaterialTheme.colorScheme.onBackground
+                tint = MaterialTheme.colorScheme.onPrimary
             )
+            Spacer(modifier = Modifier.width(8.dp))
             Text(
                 text = text.uppercase(),
                 style = TextStyle(
-                    color = MaterialTheme.colorScheme.onBackground,
+                    color = MaterialTheme.colorScheme.onPrimary,
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Black
                 )

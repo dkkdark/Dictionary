@@ -9,6 +9,7 @@ import com.kseniabl.dictionarywithexamples.domain.model.WordEntity
 import com.kseniabl.dictionarywithexamples.domain.usecases.GoogleTranslationForWordUseCase
 import com.kseniabl.dictionarywithexamples.domain.usecases.LoadDefinitionFromWordNameUseCase
 import com.kseniabl.dictionarywithexamples.domain.usecases.LoadSynonymsFromWordNameUseCase
+import com.kseniabl.dictionarywithexamples.presentation.common.processModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -39,21 +40,24 @@ class TextSelectionViewModel @Inject constructor(
     private fun getInfoForWord(word: String) = viewModelScope.launch {
         val translation = googleTranslationUseCase(word)
         translation.collect {
-            it.processModel { _translation }
+            it.processModel(getValue = { _translation }, state = _states, stateErrorVal = TextSelectionStates.Error(it.message!!),
+                stateLoadingVal = TextSelectionStates.Loading)
         }
     }
 
     private fun getSynonym(word: String) = viewModelScope.launch {
         val synonym = loadSynonymsUseCase(word)
         synonym.collect {
-            it.processModel { _synonym }
+            it.processModel(getValue = { _synonym }, state = _states, stateErrorVal = TextSelectionStates.Error(it.message!!),
+                stateLoadingVal = TextSelectionStates.Loading)
         }
     }
 
     private fun getDefinition(word: String) = viewModelScope.launch {
         val definition = loadDefinitionUseCase(word)
         definition.collect {
-            it.processModel { _definition }
+            it.processModel(getValue = { _definition }, state = _states, stateErrorVal = TextSelectionStates.Error(it.message!!),
+                stateLoadingVal = TextSelectionStates.Loading)
         }
     }
 
@@ -64,18 +68,6 @@ class TextSelectionViewModel @Inject constructor(
                 getDefinition(event.word)
                 getSynonym(event.word)
             }
-        }
-    }
-
-    private suspend inline fun <T> ResultModel<T>.processModel(
-        crossinline getValue: () -> MutableStateFlow<T>
-    ) {
-        when(this) {
-            is ResultModel.Success -> {
-                getValue().value = this.data!!
-            }
-            is ResultModel.Error -> { _states.emit(TextSelectionStates.Error(this.message!!)) }
-            is ResultModel.Loading -> { _states.emit(TextSelectionStates.Loading) }
         }
     }
 

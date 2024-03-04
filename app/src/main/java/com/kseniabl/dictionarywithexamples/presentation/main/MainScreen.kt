@@ -1,6 +1,9 @@
 package com.kseniabl.dictionarywithexamples.presentation.main
 
 import android.content.res.Configuration
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -39,14 +42,21 @@ import com.kseniabl.dictionarywithexamples.ui.theme.DictionaryWithExamplesTheme
 
 @Composable
 fun MainScreen(
-    paddingValues: PaddingValues
+    paddingValues: PaddingValues,
+    toListCreationScreen: () -> Unit = {}
 ) {
-    val list = listOf<WordListModel>(WordListModel(id = 1, name = "Слова", words = listOf()), WordListModel(id = 1, name = "Слова", words = listOf()))
+    val list = listOf(WordListModel(id = 1, name = "Слова", words = listOf()), WordListModel(id = 1, name = "Слова", words = listOf()))
 
     Column(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(paddingValues)
+            .background(color = MaterialTheme.colorScheme.background)
     ) {
         LazyColumn() {
+            item {
+                AddNewList() { toListCreationScreen() }
+            }
             items(list) {
                 ListOfWordsItem(
                     item = it
@@ -59,6 +69,43 @@ fun MainScreen(
 }
 
 @Composable
+fun AddNewList(
+    addNewList: () -> Unit
+) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp)
+            .clickable(onClick = { addNewList() }),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondary)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(55.dp)
+                .padding(horizontal = 12.dp, vertical = 6.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                modifier = Modifier.size(18.dp),
+                imageVector = Icons.Default.Add,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSecondary
+            )
+            Spacer(modifier = Modifier.width(18.dp))
+            Text(
+                text = "Добавить список",
+                style = TextStyle(
+                    color = MaterialTheme.colorScheme.onSecondary,
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.SemiBold
+                )
+            )
+        }
+    }
+}
+
+@Composable
 fun ListOfWordsItem(
     item: WordListModel
 ) {
@@ -66,11 +113,12 @@ fun ListOfWordsItem(
         modifier = Modifier
             .fillMaxWidth()
             .padding(8.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primary)
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
+                .height(55.dp)
                 .padding(horizontal = 12.dp, vertical = 6.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {

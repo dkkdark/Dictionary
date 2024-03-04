@@ -12,6 +12,9 @@ val DarkBackground = Color(0xFF111318)
 val Primary = Color(0xFFAAC7FF)
 val OnPrimary = Color(0xFF0A305F)
 
+val Secondary = Color(0xFFbec6dc)
+val OnSecondary = Color(0xFF283141)
+
 val ContainerOne = Color(0xFF004D68)
 val ContainerTwo = Color(0xFF284777)
 val ContainerThree = Color(0xFF573E5C)
