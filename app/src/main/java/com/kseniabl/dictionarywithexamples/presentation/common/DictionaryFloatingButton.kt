@@ -23,13 +23,14 @@ import com.kseniabl.dictionarywithexamples.R
 
 @Composable
 fun ColumnScope.DictionaryFloatingButton(
-    text: String
+    text: String,
+    onClick: () -> Unit
 ) {
     ExtendedFloatingActionButton(
         modifier = Modifier
             .padding(10.dp)
             .align(Alignment.End),
-        onClick = { /*TODO*/ },
+        onClick = { onClick() },
         containerColor = MaterialTheme.colorScheme.primary
     ) {
         Row(

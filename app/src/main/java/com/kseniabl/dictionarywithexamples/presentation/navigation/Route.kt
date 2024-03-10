@@ -10,3 +10,4 @@ sealed class Route(val route: String, @StringRes val resourceId: Int, @DrawableR
 }
 
 val ListCreationScreen = "list_creation_screen"
+val WordCreationScreen = "word_creation_screen"

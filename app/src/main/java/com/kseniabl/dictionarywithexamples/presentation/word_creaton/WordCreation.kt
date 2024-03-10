@@ -70,7 +70,9 @@ import com.kseniabl.dictionarywithexamples.ui.theme.DictionaryWithExamplesTheme
 
 
 @Composable
-fun CreateWord() {
+fun CreateWord(
+    paddingValues: PaddingValues
+) {
     var wordsItemsVisible by remember {
         mutableStateOf(false)
     }
@@ -120,7 +122,7 @@ fun CreateWord() {
                 end.linkTo(parent.end)
             }
         ) {
-            DictionaryFloatingButton(text = "Добавить")
+            DictionaryFloatingButton(text = "Добавить") {}
         }
         if (wordsItemsVisible) {
             Box(
@@ -337,6 +339,6 @@ fun ConstraintLayoutScope.DictionaryTextField(
 @Composable
 fun CreateWordPreview() {
     DictionaryWithExamplesTheme(darkTheme = true) {
-        CreateWord()
+        CreateWord(PaddingValues(0.dp))
     }
 }

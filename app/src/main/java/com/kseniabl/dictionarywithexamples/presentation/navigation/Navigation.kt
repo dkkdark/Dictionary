@@ -10,6 +10,8 @@ import com.kseniabl.dictionarywithexamples.presentation.main.MainScreen
 import com.kseniabl.dictionarywithexamples.presentation.navigation.routes.listCreationScreen
 import com.kseniabl.dictionarywithexamples.presentation.navigation.routes.mainScreen
 import com.kseniabl.dictionarywithexamples.presentation.navigation.routes.navigateToListCreationScreen
+import com.kseniabl.dictionarywithexamples.presentation.navigation.routes.navigateToWordCreation
+import com.kseniabl.dictionarywithexamples.presentation.navigation.routes.wordCreation
 
 @Composable
 fun DictionaryNavHost(
@@ -21,8 +23,12 @@ fun DictionaryNavHost(
             padding,
             toListCreationScreen = {
                 navController.navigateToListCreationScreen()
+            },
+            toWordCreation = {
+                navController.navigateToWordCreation()
             }
         )
         listCreationScreen(padding)
+        wordCreation(padding)
     }
 }

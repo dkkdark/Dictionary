@@ -43,7 +43,8 @@ import com.kseniabl.dictionarywithexamples.ui.theme.DictionaryWithExamplesTheme
 @Composable
 fun MainScreen(
     paddingValues: PaddingValues,
-    toListCreationScreen: () -> Unit = {}
+    toListCreationScreen: () -> Unit = {},
+    toWordCreation: () -> Unit = {}
 ) {
     val list = listOf(WordListModel(id = 1, name = "Слова", words = listOf()), WordListModel(id = 1, name = "Слова", words = listOf()))
 
@@ -64,7 +65,9 @@ fun MainScreen(
             }
         }
         Spacer(modifier = Modifier.weight(1F))
-        DictionaryFloatingButton(stringResource(R.string.word))
+        DictionaryFloatingButton(stringResource(R.string.word)) {
+            toWordCreation()
+        }
     }
 }
 

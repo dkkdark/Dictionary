@@ -2,8 +2,7 @@ package com.kseniabl.dictionarywithexamples.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-val AccentColor = Color(0xFF9B6F6F)
-val Pink80 = Color(0xFF554A6A)
+val Selected = Color(0xFF373C42)
 
 val DarkOnBackground = Color(0xFFe2e2e9)
 val BaseContainer = Color(0xFF1D2024)

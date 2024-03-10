@@ -29,12 +29,13 @@ class ListCreationViewModel @Inject constructor(
 
     @OptIn(FlowPreview::class)
     private fun getIcons(request: String) = viewModelScope.launch {
-        val icons = searchIconUseCase(request).debounce { 2500L }
-        icons.collect {
-            Log.e("qqq", "it ${it.data} ${it.message}")
-            it.processModel(getValue = { _iconsUrls }, state = _states, stateErrorVal = ListCreationStates.Error(it.message),
-                stateLoadingVal = ListCreationStates.Loading)
-        }
+        searchIconUseCase(request)
+            .debounce(1000)
+            .collect {
+                Log.e("qqq", "it ${it.data} ${it.message}")
+                it.processModel(getValue = { _iconsUrls }, state = _states, stateErrorVal = ListCreationStates.Error(it.message),
+                    stateLoadingVal = ListCreationStates.Loading)
+            }
     }
 
     fun processEvents(event: ListCreationEvent) {

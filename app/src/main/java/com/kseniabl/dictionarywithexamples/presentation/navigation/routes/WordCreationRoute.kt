@@ -7,15 +7,15 @@ import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import com.kseniabl.dictionarywithexamples.presentation.main.MainScreen
 import com.kseniabl.dictionarywithexamples.presentation.navigation.Route
+import com.kseniabl.dictionarywithexamples.presentation.navigation.WordCreationScreen
+import com.kseniabl.dictionarywithexamples.presentation.word_creaton.CreateWord
 
-fun NavController.navigateToMain(route: String = Route.MainRoute.route, navOptions: NavOptions? = null) {
+fun NavController.navigateToWordCreation(route: String = WordCreationScreen, navOptions: NavOptions? = null) {
     this.navigate(route, navOptions)
 }
 
-fun NavGraphBuilder.mainScreen(padding: PaddingValues, toListCreationScreen: () -> Unit = {}, toWordCreation: () -> Unit = {}) {
-    composable(route = Route.MainRoute.route) {
-        MainScreen(padding, toListCreationScreen = { toListCreationScreen() }, toWordCreation = {
-            toWordCreation()
-        })
+fun NavGraphBuilder.wordCreation(padding: PaddingValues) {
+    composable(route = WordCreationScreen) {
+        CreateWord(padding)
     }
 }
