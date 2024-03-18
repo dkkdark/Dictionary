@@ -26,8 +26,11 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -35,8 +38,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import coil.decode.SvgDecoder
+import coil.request.ImageRequest
 import com.kseniabl.dictionarywithexamples.R
+import com.kseniabl.dictionarywithexamples.data.local.ListsRealm
 import com.kseniabl.dictionarywithexamples.domain.model.WordListModel
+import com.kseniabl.dictionarywithexamples.presentation.common.DictionaryAsyncImage
 import com.kseniabl.dictionarywithexamples.presentation.common.DictionaryFloatingButton
 import com.kseniabl.dictionarywithexamples.ui.theme.DictionaryWithExamplesTheme
 
@@ -44,9 +52,10 @@ import com.kseniabl.dictionarywithexamples.ui.theme.DictionaryWithExamplesTheme
 fun MainScreen(
     paddingValues: PaddingValues,
     toListCreationScreen: () -> Unit = {},
-    toWordCreation: () -> Unit = {}
+    toWordCreation: () -> Unit = {},
+    viewModel: MainViewModel = hiltViewModel()
 ) {
-    val list = listOf(WordListModel(id = 1, name = "Слова", words = listOf()), WordListModel(id = 1, name = "Слова", words = listOf()))
+    val list by viewModel.lists.collectAsState()
 
     Column(
         modifier = Modifier
@@ -110,8 +119,14 @@ fun AddNewList(
 
 @Composable
 fun ListOfWordsItem(
-    item: WordListModel
+    item: ListsRealm
 ) {
+    val request =
+        ImageRequest.Builder(LocalContext.current)
+            .decoderFactory(SvgDecoder.Factory())
+            .data(data = item.listIcon)
+            .build()
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -125,18 +140,13 @@ fun ListOfWordsItem(
                 .padding(horizontal = 12.dp, vertical = 6.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Icon(
-                modifier = Modifier.size(18.dp),
-                painter = painterResource(id = R.drawable.language_white),
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.onBackground
-            )
+            DictionaryAsyncImage(request = request)
             Spacer(modifier = Modifier.width(8.dp))
             Column(
                 modifier = Modifier.weight(1F)
             ) {
                 Text(
-                    text = item.name,
+                    text = item.listName,
                     style = TextStyle(
                         color = MaterialTheme.colorScheme.onBackground,
                         fontSize = 14.sp,

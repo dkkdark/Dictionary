@@ -3,7 +3,6 @@ package com.kseniabl.dictionarywithexamples.presentation.common
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
-import androidx.compose.material3.Divider
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -14,7 +13,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kseniabl.dictionarywithexamples.domain.model.DefinitionEntity
 import com.kseniabl.dictionarywithexamples.domain.model.TranslationEntity
-import com.kseniabl.dictionarywithexamples.domain.model.WordEntity
+import com.kseniabl.dictionarywithexamples.domain.model.SynonymEntity
 import com.kseniabl.dictionarywithexamples.presentation.text_selecton.DefinitionsListView
 import com.kseniabl.dictionarywithexamples.presentation.text_selecton.SynonymsList
 
@@ -22,7 +21,7 @@ import com.kseniabl.dictionarywithexamples.presentation.text_selecton.SynonymsLi
 fun WordItem(
     text: String,
     definitions: List<DefinitionEntity>,
-    synonyms: List<WordEntity>,
+    synonyms: List<SynonymEntity>,
     translations: TranslationEntity
 ) {
     Column {

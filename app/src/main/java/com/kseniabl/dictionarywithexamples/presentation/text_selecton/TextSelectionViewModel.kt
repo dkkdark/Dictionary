@@ -3,9 +3,8 @@ package com.kseniabl.dictionarywithexamples.presentation.text_selecton
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kseniabl.dictionarywithexamples.domain.model.DefinitionEntity
-import com.kseniabl.dictionarywithexamples.domain.model.ResultModel
 import com.kseniabl.dictionarywithexamples.domain.model.TranslationEntity
-import com.kseniabl.dictionarywithexamples.domain.model.WordEntity
+import com.kseniabl.dictionarywithexamples.domain.model.SynonymEntity
 import com.kseniabl.dictionarywithexamples.domain.usecases.GoogleTranslationForWordUseCase
 import com.kseniabl.dictionarywithexamples.domain.usecases.LoadDefinitionFromWordNameUseCase
 import com.kseniabl.dictionarywithexamples.domain.usecases.LoadSynonymsFromWordNameUseCase
@@ -25,13 +24,13 @@ class TextSelectionViewModel @Inject constructor(
     val loadSynonymsUseCase: LoadSynonymsFromWordNameUseCase
 ): ViewModel() {
 
-    private val _translation = MutableStateFlow(TranslationEntity(""))
+    private val _translation = MutableStateFlow(TranslationEntity())
     val translation = _translation.asStateFlow()
 
     private val _definition = MutableStateFlow<List<DefinitionEntity>>(listOf())
     val definition = _definition.asStateFlow()
 
-    private val _synonym = MutableStateFlow<List<WordEntity>>(listOf())
+    private val _synonym = MutableStateFlow<List<SynonymEntity>>(listOf())
     val synonym = _synonym.asStateFlow()
 
     private val _states = MutableSharedFlow<TextSelectionStates>()

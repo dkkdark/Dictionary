@@ -58,8 +58,8 @@ inline fun <R,T> processData(
     crossinline mapper: (R) -> List<T>
 ) = flow {
     emit(ResultModel.Loading())
+    Log.e("qqq", "ggg ${data().raw()}")
     val response = data()
-    Log.e("qqq", "response $response")
 
     if (response.isSuccessful && response.body() != null) {
         val body = response.body()!!

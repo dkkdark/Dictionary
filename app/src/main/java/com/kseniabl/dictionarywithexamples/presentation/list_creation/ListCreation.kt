@@ -25,6 +25,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -45,6 +46,7 @@ import coil.compose.AsyncImagePainter
 import coil.compose.SubcomposeAsyncImage
 import coil.decode.SvgDecoder
 import coil.request.ImageRequest
+import com.kseniabl.dictionarywithexamples.presentation.common.DictionaryAsyncImage
 import com.kseniabl.dictionarywithexamples.presentation.common.DictionaryFloatingButton
 import com.kseniabl.dictionarywithexamples.ui.theme.DictionaryWithExamplesTheme
 import com.kseniabl.dictionarywithexamples.ui.theme.Selected
@@ -52,19 +54,46 @@ import com.kseniabl.dictionarywithexamples.ui.theme.Selected
 @Composable
 fun ListCreation(
     padding: PaddingValues = PaddingValues(0.dp),
+    toMainScreen: () -> Unit = {},
     viewModel: ListCreationViewModel = hiltViewModel()
 ) {
     val iconsList by viewModel.iconsUrls.collectAsState()
     var chosenIcon by remember {
         mutableStateOf<String?>(null)
     }
+    var listName by remember {
+        mutableStateOf("")
+    }
+
+    LaunchedEffect(true) {
+        viewModel.states.collect {
+            when(it) {
+                is ListCreationViewModel.ListCreationStates.Loading -> {}
+                is ListCreationViewModel.ListCreationStates.SuccessSaving -> {}
+                is ListCreationViewModel.ListCreationStates.Error -> {}
+                is ListCreationViewModel.ListCreationStates.NotCorrectDate -> {}
+                is ListCreationViewModel.ListCreationStates.IconIsNull -> {
+
+                }
+                is ListCreationViewModel.ListCreationStates.NameIsEmpty -> {
+
+                }
+                is ListCreationViewModel.ListCreationStates.ReturnToMainScreen -> {
+                    toMainScreen()
+                }
+            }
+        }
+    }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .padding(padding)
             .background(color = MaterialTheme.colorScheme.background)
     ) {
-        CreateListField("Название списка")
+        CreateListField("Название списка") {
+            listName = it
+        }
         Spacer(modifier = Modifier.height(20.dp))
         Card(
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
@@ -95,7 +124,11 @@ fun ListCreation(
             }
         }
         Spacer(modifier = Modifier.weight(1F))
-        DictionaryFloatingButton(text = "Добавить") {}
+        DictionaryFloatingButton(text = "Добавить") {
+            viewModel.processEvents(ListCreationViewModel.ListCreationEvent.AddList(
+                listName, chosenIcon
+            ))
+        }
     }
 }
 
@@ -125,10 +158,7 @@ fun CreateListField(
             .fillMaxWidth()
             .background(
                 shape = RoundedCornerShape(
-                    topStart = 0.dp,
-                    topEnd = 0.dp,
-                    bottomEnd = 12.dp,
-                    bottomStart = 12.dp
+                    12.dp
                 ), color = MaterialTheme.colorScheme.primaryContainer
             ),
         value = text,
@@ -184,27 +214,7 @@ fun IconsList(
         colors = CardDefaults.cardColors(containerColor =
         if (chosenIcon != icon) MaterialTheme.colorScheme.primaryContainer else Selected)
     ) {
-        SubcomposeAsyncImage(
-            modifier = Modifier.padding(8.dp),
-            model = request,
-            contentDescription = null
-        ) {
-            when(painter.state) {
-                is AsyncImagePainter.State.Error -> {
-                }
-                is AsyncImagePainter.State.Loading -> {
-                }
-                is AsyncImagePainter.State.Success -> {
-                    Image(
-                        modifier = Modifier.size(38.dp),
-                        painter = painter,
-                        contentDescription = null)
-                }
-                else -> {
-                    Log.e("qqq", "else")
-                }
-            }
-        }
+        DictionaryAsyncImage(request = request)
     }
 
 }

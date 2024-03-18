@@ -9,5 +9,4 @@ class SearchIconUseCase @Inject constructor(
     suspend operator fun invoke(request: String) =
         repository.searchIcons(request)
 
-
 }

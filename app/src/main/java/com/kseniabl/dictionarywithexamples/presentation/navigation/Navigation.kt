@@ -7,16 +7,20 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.kseniabl.dictionarywithexamples.presentation.list_creation.ListCreation
 import com.kseniabl.dictionarywithexamples.presentation.main.MainScreen
+import com.kseniabl.dictionarywithexamples.presentation.main.TopBarState
 import com.kseniabl.dictionarywithexamples.presentation.navigation.routes.listCreationScreen
 import com.kseniabl.dictionarywithexamples.presentation.navigation.routes.mainScreen
 import com.kseniabl.dictionarywithexamples.presentation.navigation.routes.navigateToListCreationScreen
+import com.kseniabl.dictionarywithexamples.presentation.navigation.routes.navigateToMain
 import com.kseniabl.dictionarywithexamples.presentation.navigation.routes.navigateToWordCreation
 import com.kseniabl.dictionarywithexamples.presentation.navigation.routes.wordCreation
 
 @Composable
 fun DictionaryNavHost(
     navController: NavHostController,
-    padding: PaddingValues
+    padding: PaddingValues,
+    topBarChanged: (TopBarState) -> Unit
+
 ) {
     NavHost(navController, startDestination = Route.MainRoute.route) {
         mainScreen(
@@ -26,9 +30,25 @@ fun DictionaryNavHost(
             },
             toWordCreation = {
                 navController.navigateToWordCreation()
+            },
+            topBarChanged = {
+                topBarChanged(it)
             }
         )
-        listCreationScreen(padding)
-        wordCreation(padding)
+        listCreationScreen(
+            padding,
+            toMainScreen = {
+                navController.navigateToMain()
+            },
+            topBarChanged = {
+                topBarChanged(it)
+            }
+        )
+        wordCreation(
+            padding,
+            topBarChanged = {
+                topBarChanged(it)
+            }
+        )
     }
 }

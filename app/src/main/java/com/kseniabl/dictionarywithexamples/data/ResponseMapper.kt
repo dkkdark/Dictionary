@@ -2,12 +2,9 @@ package com.kseniabl.dictionarywithexamples.data
 
 import com.kseniabl.dictionarywithexamples.data.model.dictionary.MeaningModel
 import com.kseniabl.dictionarywithexamples.data.model.icons.IconsModel
-import com.kseniabl.dictionarywithexamples.data.model.synonyms.SynonymResponse
-import com.kseniabl.dictionarywithexamples.data.model.synonyms.WordModel
-import com.kseniabl.dictionarywithexamples.data.remote.IconsSource
+import com.kseniabl.dictionarywithexamples.data.model.synonyms.SynonymModel
 import com.kseniabl.dictionarywithexamples.domain.model.DefinitionEntity
-import com.kseniabl.dictionarywithexamples.domain.model.WordEntity
-import java.util.ArrayList
+import com.kseniabl.dictionarywithexamples.domain.model.SynonymEntity
 
 fun List<MeaningModel>.mapDictionary(): List<DefinitionEntity> {
     val definitions = arrayListOf<DefinitionEntity>()
@@ -15,17 +12,17 @@ fun List<MeaningModel>.mapDictionary(): List<DefinitionEntity> {
         it.meanings.forEach {
             it.definitions.forEach { dm ->
                 if (dm.definition != null)
-                    definitions.add(DefinitionEntity(dm.definition, dm.example))
+                    definitions.add(DefinitionEntity(dm.definition!!, dm.example))
             }
         }
     }
     return definitions.take(3).ifEmpty { definitions }
 }
 
-fun List<WordModel>.mapSynonym(): List<WordEntity> {
-    val synonyms = arrayListOf<WordEntity>()
+fun List<SynonymModel>.mapSynonym(): List<SynonymEntity> {
+    val synonyms = arrayListOf<SynonymEntity>()
     this.forEach {
-        synonyms.add(WordEntity(it.word, it.score))
+        synonyms.add(SynonymEntity(it.word, it.score))
     }
     return synonyms.take(5).ifEmpty { synonyms }
 }

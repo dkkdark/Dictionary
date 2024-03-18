@@ -84,6 +84,7 @@ fun CreateWord(
     ConstraintLayout(
         modifier = Modifier
             .fillMaxSize()
+            .padding(paddingValues)
             .background(MaterialTheme.colorScheme.background)
     ) {
         val (searchWord, column, fab) = createRefs()
@@ -263,12 +264,8 @@ fun ConstraintLayoutScope.DictionaryTextField(
         modifier = Modifier
             .fillMaxWidth()
             .background(
-                shape = RoundedCornerShape(
-                    topStart = 0.dp,
-                    topEnd = 0.dp,
-                    bottomEnd = 12.dp,
-                    bottomStart = 12.dp
-                ), color = MaterialTheme.colorScheme.primaryContainer
+                shape = RoundedCornerShape(12.dp),
+                color = MaterialTheme.colorScheme.primaryContainer
             )
             .constrainAs(ref) { top.linkTo(parent.top) }
             .onGloballyPositioned { coordinates ->

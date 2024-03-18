@@ -29,6 +29,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ShapeDefaults
@@ -47,7 +48,7 @@ import androidx.core.view.WindowCompat
 import com.kseniabl.dictionarywithexamples.R
 import com.kseniabl.dictionarywithexamples.domain.model.DefinitionEntity
 import com.kseniabl.dictionarywithexamples.domain.model.TranslationEntity
-import com.kseniabl.dictionarywithexamples.domain.model.WordEntity
+import com.kseniabl.dictionarywithexamples.domain.model.SynonymEntity
 import com.kseniabl.dictionarywithexamples.presentation.common.WordItem
 import com.kseniabl.dictionarywithexamples.ui.theme.DictionaryWithExamplesTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -138,7 +139,7 @@ fun WindowContent(viewModel: TextSelectionViewModel, selectedText: String) {
                 translations = translations
             )
             Spacer(modifier = Modifier.height(12.dp))
-            Divider(
+            HorizontalDivider(
                 thickness = 1.dp,
                 color = MaterialTheme.colorScheme.onBackground
             )
@@ -162,7 +163,7 @@ fun DefinitionsListView(definitions: List<DefinitionEntity>) {
 }
 
 @Composable
-fun SynonymsList(synonyms: List<WordEntity>) {
+fun SynonymsList(synonyms: List<SynonymEntity>) {
     synonyms.forEach {
             Text(
                 text = it.word,

@@ -6,6 +6,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import com.kseniabl.dictionarywithexamples.presentation.main.MainScreen
+import com.kseniabl.dictionarywithexamples.presentation.main.TopBarState
 import com.kseniabl.dictionarywithexamples.presentation.navigation.Route
 import com.kseniabl.dictionarywithexamples.presentation.navigation.WordCreationScreen
 import com.kseniabl.dictionarywithexamples.presentation.word_creaton.CreateWord
@@ -14,8 +15,9 @@ fun NavController.navigateToWordCreation(route: String = WordCreationScreen, nav
     this.navigate(route, navOptions)
 }
 
-fun NavGraphBuilder.wordCreation(padding: PaddingValues) {
+fun NavGraphBuilder.wordCreation(padding: PaddingValues, topBarChanged: (TopBarState) -> Unit) {
     composable(route = WordCreationScreen) {
+        topBarChanged(TopBarState(false, "Новое слово"))
         CreateWord(padding)
     }
 }

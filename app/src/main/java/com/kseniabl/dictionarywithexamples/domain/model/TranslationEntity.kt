@@ -1,5 +1,7 @@
 package com.kseniabl.dictionarywithexamples.domain.model
 
-data class TranslationEntity(
-    val text: String
-)
+import io.realm.kotlin.types.RealmObject
+
+class TranslationEntity: RealmObject {
+    var text: String = ""
+}
