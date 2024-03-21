@@ -1,4 +1,4 @@
-package com.kseniabl.dictionarywithexamples.presentation
+package com.kseniabl.dictionarywithexamples.presentation.text_selecton
 
 import android.content.Intent
 import android.os.Build
@@ -9,25 +9,17 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.scrollable
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowColumn
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
@@ -36,7 +28,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ShapeDefaults
@@ -53,13 +45,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.view.WindowCompat
 import com.kseniabl.dictionarywithexamples.R
-import com.kseniabl.dictionarywithexamples.data.model.dictionary.DefinitionsList
 import com.kseniabl.dictionarywithexamples.domain.model.DefinitionEntity
 import com.kseniabl.dictionarywithexamples.domain.model.TranslationEntity
-import com.kseniabl.dictionarywithexamples.domain.model.WordEntity
-import com.kseniabl.dictionarywithexamples.presentation.viewmodel.TextSelectionEvent
-import com.kseniabl.dictionarywithexamples.presentation.viewmodel.TextSelectionStates
-import com.kseniabl.dictionarywithexamples.presentation.viewmodel.TextSelectionViewModel
+import com.kseniabl.dictionarywithexamples.domain.model.SynonymEntity
+import com.kseniabl.dictionarywithexamples.presentation.common.BaseEvent
+import com.kseniabl.dictionarywithexamples.presentation.common.BaseStates
+import com.kseniabl.dictionarywithexamples.presentation.common.WordItem
 import com.kseniabl.dictionarywithexamples.ui.theme.DictionaryWithExamplesTheme
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.ArrayList
@@ -79,8 +70,7 @@ class TextSelectionActivity : ComponentActivity() {
         }
 
         val selectedText = intent.getStringExtra(Intent.EXTRA_PROCESS_TEXT) ?: ""
-        Log.e("qqq", "selectedText $selectedText")
-        viewModel.processEvents(TextSelectionEvent.GetInfoForWord(selectedText))
+        viewModel.processEvents(BaseEvent.GetInfoForWord(selectedText))
 
         setContent {
             DictionaryWithExamplesTheme {
@@ -101,16 +91,16 @@ fun WindowContent(viewModel: TextSelectionViewModel, selectedText: String) {
     LaunchedEffect(true) {
         viewModel.states.collect {
             when(it) {
-                is TextSelectionStates.Error -> {
+                is BaseStates.Error -> {
                     Log.e("qqq", "Error ${it.error}")
                 }
-                is TextSelectionStates.Loading -> {
+                is BaseStates.Loading -> {
                     Log.e("qqq", "Loading")
                 }
-                is TextSelectionStates.SuccessSaving -> {
+                is BaseStates.SuccessSaving -> {
                     Log.e("qqq", "Success")
                 }
-                is TextSelectionStates.NotCorrectDate -> {
+                is BaseStates.NotCorrectDate -> {
                     Log.e("qqq", "NotCorrectDate")
                 }
             }
@@ -124,7 +114,9 @@ fun WindowContent(viewModel: TextSelectionViewModel, selectedText: String) {
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.background)
     ) {
         Column(
-            modifier = Modifier.padding(16.dp).verticalScroll(scrollableState)
+            modifier = Modifier
+                .padding(16.dp)
+                .verticalScroll(scrollableState)
         ) {
             Row() {
                 Image(
@@ -141,30 +133,14 @@ fun WindowContent(viewModel: TextSelectionViewModel, selectedText: String) {
                 )
             }
             Spacer(modifier = Modifier.height(24.dp))
-            Text(
+            WordItem(
                 text = selectedText,
-                fontSize = 16.sp,
-                color = MaterialTheme.colorScheme.onBackground,
-                fontWeight = FontWeight.SemiBold
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-            DefinitionsListView(definitions)
-            Spacer(modifier = Modifier.height(10.dp))
-            SynonymsList(synonyms)
-            Spacer(modifier = Modifier.height(16.dp))
-            Divider(
-                thickness = 1.dp,
-                color = MaterialTheme.colorScheme.onBackground
+                definitions = definitions,
+                synonyms = synonyms,
+                translations = translations
             )
             Spacer(modifier = Modifier.height(12.dp))
-            Text(
-                text = translations.text,
-                fontSize = 16.sp,
-                color = MaterialTheme.colorScheme.onBackground,
-                fontWeight = FontWeight.SemiBold
-            )
-            Spacer(modifier = Modifier.height(12.dp))
-            Divider(
+            HorizontalDivider(
                 thickness = 1.dp,
                 color = MaterialTheme.colorScheme.onBackground
             )
@@ -188,7 +164,7 @@ fun DefinitionsListView(definitions: List<DefinitionEntity>) {
 }
 
 @Composable
-fun SynonymsList(synonyms: List<WordEntity>) {
+fun SynonymsList(synonyms: List<SynonymEntity>) {
     synonyms.forEach {
             Text(
                 text = it.word,

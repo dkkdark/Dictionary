@@ -49,7 +49,9 @@ class GoogleTranslation {
 
     private fun Translator.translateText(text: String) = callbackFlow<ResultModel<TranslationEntity>> {
         val onSuccessListener = OnSuccessListener<String> { translatedText ->
-            trySend(ResultModel.Success(TranslationEntity(translatedText)))
+            val translation = TranslationEntity()
+            translation.text = translatedText
+            trySend(ResultModel.Success(translation))
         }
 
         val onFailureListener = OnFailureListener { exception ->

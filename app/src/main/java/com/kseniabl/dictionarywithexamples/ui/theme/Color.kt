@@ -2,13 +2,23 @@ package com.kseniabl.dictionarywithexamples.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-val Purple80 = Color(0xFFD0BCFF)
-val PurpleGrey80 = Color(0xFFCCC2DC)
-val Pink80 = Color(0xFFEFB8C8)
+val Selected = Color(0xFF373C42)
 
-val DarkOnBackground = Color(0xFFFFFFFF)
-val LightGrey = Color(0xFF606060)
-val DarkBackground = Color(0xFF303030)
+val DarkOnBackground = Color(0xFFe2e2e9)
+val LighterBaseContainer = Color(0xFF2D3035)
+val BaseContainer = Color(0xFF1D2024)
+val DarkBackground = Color(0xFF111318)
+
+val Primary = Color(0xFFAAC7FF)
+val OnPrimary = Color(0xFF0A305F)
+
+val Secondary = Color(0xFFbec6dc)
+val OnSecondary = Color(0xFF283141)
+
+val ContainerOne = Color(0xFF004D68)
+val ContainerTwo = Color(0xFF284777)
+val ContainerThree = Color(0xFF573E5C)
+val ContainerFour = Color(0xFF4C3E75)
 
 val Purple40 = Color(0xFF6650a4)
 val PurpleGrey40 = Color(0xFF625b71)
