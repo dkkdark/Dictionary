@@ -6,16 +6,13 @@ import androidx.lifecycle.viewModelScope
 import com.kseniabl.dictionarywithexamples.data.local.ListsRealm
 import com.kseniabl.dictionarywithexamples.domain.usecases.SearchIconUseCase
 import com.kseniabl.dictionarywithexamples.presentation.common.processModel
-import com.kseniabl.dictionarywithexamples.presentation.text_selecton.TextSelectionStates
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.realm.kotlin.Realm
 import io.realm.kotlin.ext.realmListOf
-import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -31,10 +28,9 @@ class ListCreationViewModel @Inject constructor(
     private val _states = MutableSharedFlow<ListCreationStates>()
     val states = _states.asSharedFlow()
 
-    @OptIn(FlowPreview::class)
+
     private fun getIcons(request: String) = viewModelScope.launch {
         searchIconUseCase(request)
-            .debounce(1000)
             .collect {
                 Log.e("qqq", "it ${it.data} ${it.message}")
                 it.processModel(getValue = { _iconsUrls }, state = _states, stateErrorVal = ListCreationStates.Error(it.message),

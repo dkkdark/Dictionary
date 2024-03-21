@@ -16,5 +16,5 @@ class WordsRealm: RealmObject {
     var word: String = ""
     var synonym: RealmList<SynonymModel> = realmListOf()
     var definition: RealmList<DefinitionModel> = realmListOf()
-    var translation: TranslationEntity? = null
+    var translation: RealmList<TranslationEntity> = realmListOf()
 }

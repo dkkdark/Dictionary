@@ -28,7 +28,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Divider
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -49,6 +48,8 @@ import com.kseniabl.dictionarywithexamples.R
 import com.kseniabl.dictionarywithexamples.domain.model.DefinitionEntity
 import com.kseniabl.dictionarywithexamples.domain.model.TranslationEntity
 import com.kseniabl.dictionarywithexamples.domain.model.SynonymEntity
+import com.kseniabl.dictionarywithexamples.presentation.common.BaseEvent
+import com.kseniabl.dictionarywithexamples.presentation.common.BaseStates
 import com.kseniabl.dictionarywithexamples.presentation.common.WordItem
 import com.kseniabl.dictionarywithexamples.ui.theme.DictionaryWithExamplesTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -69,7 +70,7 @@ class TextSelectionActivity : ComponentActivity() {
         }
 
         val selectedText = intent.getStringExtra(Intent.EXTRA_PROCESS_TEXT) ?: ""
-        viewModel.processEvents(TextSelectionEvent.GetInfoForWord(selectedText))
+        viewModel.processEvents(BaseEvent.GetInfoForWord(selectedText))
 
         setContent {
             DictionaryWithExamplesTheme {
@@ -90,16 +91,16 @@ fun WindowContent(viewModel: TextSelectionViewModel, selectedText: String) {
     LaunchedEffect(true) {
         viewModel.states.collect {
             when(it) {
-                is TextSelectionStates.Error -> {
+                is BaseStates.Error -> {
                     Log.e("qqq", "Error ${it.error}")
                 }
-                is TextSelectionStates.Loading -> {
+                is BaseStates.Loading -> {
                     Log.e("qqq", "Loading")
                 }
-                is TextSelectionStates.SuccessSaving -> {
+                is BaseStates.SuccessSaving -> {
                     Log.e("qqq", "Success")
                 }
-                is TextSelectionStates.NotCorrectDate -> {
+                is BaseStates.NotCorrectDate -> {
                     Log.e("qqq", "NotCorrectDate")
                 }
             }

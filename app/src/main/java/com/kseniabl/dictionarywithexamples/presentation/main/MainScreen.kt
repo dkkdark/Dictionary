@@ -43,6 +43,7 @@ import coil.decode.SvgDecoder
 import coil.request.ImageRequest
 import com.kseniabl.dictionarywithexamples.R
 import com.kseniabl.dictionarywithexamples.data.local.ListsRealm
+import com.kseniabl.dictionarywithexamples.domain.model.ListModel
 import com.kseniabl.dictionarywithexamples.domain.model.WordListModel
 import com.kseniabl.dictionarywithexamples.presentation.common.DictionaryAsyncImage
 import com.kseniabl.dictionarywithexamples.presentation.common.DictionaryFloatingButton
@@ -119,7 +120,7 @@ fun AddNewList(
 
 @Composable
 fun ListOfWordsItem(
-    item: ListsRealm
+    item: ListModel
 ) {
     val request =
         ImageRequest.Builder(LocalContext.current)
@@ -140,7 +141,7 @@ fun ListOfWordsItem(
                 .padding(horizontal = 12.dp, vertical = 6.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            DictionaryAsyncImage(request = request)
+            DictionaryAsyncImage(request = request, Modifier.padding(4.dp), 38.dp)
             Spacer(modifier = Modifier.width(8.dp))
             Column(
                 modifier = Modifier.weight(1F)

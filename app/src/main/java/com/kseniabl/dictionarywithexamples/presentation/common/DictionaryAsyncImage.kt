@@ -6,15 +6,20 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImagePainter
 import coil.compose.SubcomposeAsyncImage
 import coil.request.ImageRequest
 
 @Composable
-fun DictionaryAsyncImage(request: ImageRequest) {
+fun DictionaryAsyncImage(
+    request: ImageRequest,
+    modifier: Modifier,
+    size: Dp
+) {
     SubcomposeAsyncImage(
-        modifier = Modifier.padding(8.dp),
+        modifier = modifier,
         model = request,
         contentDescription = null
     ) {
@@ -25,7 +30,7 @@ fun DictionaryAsyncImage(request: ImageRequest) {
             }
             is AsyncImagePainter.State.Success -> {
                 Image(
-                    modifier = Modifier.size(38.dp),
+                    modifier = Modifier.size(size),
                     painter = painter,
                     contentDescription = null)
             }

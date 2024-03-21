@@ -1,10 +1,10 @@
 package com.kseniabl.dictionarywithexamples.presentation.word_creaton
 
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOut
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -21,13 +21,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -36,32 +35,40 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ChainStyle
-import androidx.constraintlayout.compose.ConstrainScope
-import androidx.constraintlayout.compose.ConstrainedLayoutReference
 import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.constraintlayout.compose.ConstraintLayoutScope
 import androidx.constraintlayout.compose.Dimension
+import androidx.hilt.navigation.compose.hiltViewModel
+import coil.decode.SvgDecoder
+import coil.request.ImageRequest
 import com.kseniabl.dictionarywithexamples.R
+import com.kseniabl.dictionarywithexamples.domain.model.ListModel
+import com.kseniabl.dictionarywithexamples.presentation.common.BaseEvent
+import com.kseniabl.dictionarywithexamples.presentation.common.DictionaryAsyncImage
 import com.kseniabl.dictionarywithexamples.presentation.common.DictionaryFloatingButton
-import com.kseniabl.dictionarywithexamples.ui.theme.BaseContainer
 import com.kseniabl.dictionarywithexamples.ui.theme.ContainerFour
 import com.kseniabl.dictionarywithexamples.ui.theme.ContainerOne
 import com.kseniabl.dictionarywithexamples.ui.theme.ContainerThree
@@ -71,7 +78,9 @@ import com.kseniabl.dictionarywithexamples.ui.theme.DictionaryWithExamplesTheme
 
 @Composable
 fun CreateWord(
-    paddingValues: PaddingValues
+    paddingValues: PaddingValues,
+    toMainScreen: () -> Unit = {},
+    viewModel: WordCreationViewModel = hiltViewModel()
 ) {
     var wordsItemsVisible by remember {
         mutableStateOf(false)
@@ -79,71 +88,125 @@ fun CreateWord(
     var addWordItemPadding by remember {
         mutableStateOf(0.dp)
     }
+    var fabSize by remember {
+        mutableStateOf(0.dp)
+    }
     val density = LocalDensity.current
 
-    ConstraintLayout(
+    var word by rememberSaveable {
+        mutableStateOf("")
+    }
+
+    val definitions by viewModel.definition.collectAsState()
+    val synonyms by viewModel.synonym.collectAsState()
+    val translations by viewModel.translation.collectAsState()
+
+    val lists by viewModel.lists.collectAsState()
+    val chosenList by viewModel.chosenList.collectAsState()
+
+    LaunchedEffect(true) {
+        viewModel.wordCreationStates.collect {
+            when (it) {
+                is WordCreationViewModel.WordCreationStates.Error -> TODO()
+                WordCreationViewModel.WordCreationStates.Loading -> TODO()
+                WordCreationViewModel.WordCreationStates.ReturnToMainScreen -> {
+                    toMainScreen()
+                }
+                WordCreationViewModel.WordCreationStates.SpecifyWord -> TODO()
+            }
+        }
+    }
+
+    Box(
         modifier = Modifier
             .fillMaxSize()
             .padding(paddingValues)
             .background(MaterialTheme.colorScheme.background)
     ) {
-        val (searchWord, column, fab) = createRefs()
 
-        Column(
-            modifier = Modifier.constrainAs(column) { top.linkTo(searchWord.bottom) }
-        ) {
-            Spacer(modifier = Modifier.height(10.dp))
-            TitleWordCreation(icon = R.drawable.world, title = "Definitions")
-            CardWordCreation(
-                color = ContainerOne,
-                titles = listOf("causing annoyance, impatience, or mild anger")
+        Column {
+            DictionaryTextField(
+                "Слово",
+                onValueChange = {
+                    viewModel.processEvents(BaseEvent.GetInfoForWord(it))
+                    word = it
+                },
+                onClick = {
+                    wordsItemsVisible = true
+                },
+                onSizeChanged = {
+                    addWordItemPadding = it - 14.dp
+                },
+                chosenList,
             )
-            Spacer(modifier = Modifier.height(10.dp))
-            TitleWordCreation(icon = R.drawable.language, title = "Translation")
-            CardWordCreation(
-                color = ContainerTwo,
-                titles = listOf("раздраженный", "раздражающий", "мешающий")
-            )
-            Spacer(modifier = Modifier.height(10.dp))
-            TitleWordCreation(icon = R.drawable.book, title = "Synonyms")
-            CardWordCreation(color = ContainerThree, titles = listOf("annoying", "exasperation"))
-            Spacer(modifier = Modifier.height(10.dp))
-            TitleWordCreation(icon = R.drawable.world, title = "Examples")
-            CardWordCreation(
-                color = ContainerFour,
-                titles = listOf(
-                    "the substance may be irritating to eyes and skin",
-                    "an irritating child"
-                )
-            )
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+            ) {
+                Spacer(modifier = Modifier.height(10.dp))
+                if (definitions.isNotEmpty()) {
+                    TitleWordCreation(icon = R.drawable.world, title = "Definitions")
+                    CardWordCreation(
+                        color = ContainerOne,
+                        titles = definitions.map { it.definition }
+                    )
+                    Spacer(modifier = Modifier.height(10.dp))
+                }
+                if (translations.text.isNotEmpty()) {
+                    TitleWordCreation(icon = R.drawable.language, title = "Translation")
+                    CardWordCreation(
+                        color = ContainerTwo,
+                        titles = listOf(translations.text)
+                    )
+                    Spacer(modifier = Modifier.height(10.dp))
+                }
+                if (synonyms.isNotEmpty()) {
+                    TitleWordCreation(icon = R.drawable.book, title = "Synonyms")
+                    CardWordCreation(
+                        color = ContainerThree,
+                        titles = synonyms.map { it.word }
+                    )
+                    Spacer(modifier = Modifier.height(10.dp))
+                }
+                if (definitions.isNotEmpty() && !definitions.all { it.example == null }) {
+                    TitleWordCreation(icon = R.drawable.world, title = "Examples")
+                    CardWordCreation(
+                        color = ContainerFour,
+                        titles = definitions.mapNotNull { it.example }
+                    )
+                }
+                Spacer(modifier = Modifier.height(fabSize))
+            }
         }
         Column(
-            modifier = Modifier.constrainAs(fab) {
-                bottom.linkTo(parent.bottom)
-                end.linkTo(parent.end)
-            }
+            modifier = Modifier.align(Alignment.BottomEnd),
         ) {
-            DictionaryFloatingButton(text = "Добавить") {}
+            DictionaryFloatingButton(text = "Добавить",
+                onClick = {
+                    viewModel.processWordCreationEvents(WordCreationViewModel.WordCreationEvent.SaveWord(word))
+                },
+                onSizeChanged = { fabSize = it + 10.dp }
+            )
         }
         if (wordsItemsVisible) {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
                     .background(color = Color.Black.copy(alpha = 0.5f))
-            ) {
-            }
+            ) {}
         }
-        DictionaryTextField("Слово", searchWord, onClick =  {
-            wordsItemsVisible = !wordsItemsVisible
-        }, onSizeChanged = {
-            addWordItemPadding = it - 14.dp
-        }, wordsItemsVisible)
         AnimatedVisibility(
             visible = wordsItemsVisible,
-            enter = slideInVertically { with(density) { (addWordItemPadding-80.dp).roundToPx() } } + fadeIn(initialAlpha = 0.3F),
-            exit = slideOutVertically { with(density) { (addWordItemPadding-80.dp).roundToPx() } } + fadeOut()
+            enter = slideInVertically { with(density) { (addWordItemPadding - 80.dp).roundToPx() } } + fadeIn(
+                initialAlpha = 0.3F,
+            ),
+            exit = slideOutVertically { with(density) { (addWordItemPadding - 80.dp).roundToPx() } } + fadeOut(),
         ) {
-            AddWordsItems(addWordItemPadding)
+            AddWordsItems(addWordItemPadding, lists, onClick = {
+                viewModel.processWordCreationEvents(WordCreationViewModel.WordCreationEvent.UpdateChosenList(it))
+                wordsItemsVisible = false
+            })
         }
     }
 }
@@ -151,42 +214,56 @@ fun CreateWord(
 @Composable
 fun AddWordsItems(
     padding: Dp,
-    onClick: () -> Unit = {}
+    lists: List<ListModel>,
+    onClick: (ListModel) -> Unit = {}
 ) {
-    val list = mapOf(ContainerOne to "example", ContainerTwo to "definition", ContainerThree to "translation", ContainerFour to "synonym")
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(top = padding),
         horizontalAlignment = Alignment.End
     ) {
-        list.forEach {
-            Button(
-                modifier = Modifier
-                    .wrapContentWidth()
-                    .height(47.dp)
-                    .padding(top = 6.dp, bottom = 6.dp, start = 6.dp, end = 18.dp),
-                onClick = { onClick() },
-                contentPadding = PaddingValues(4.dp),
-                shape = RoundedCornerShape(12.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = it.key)
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onBackground
-                )
-                Text(
-                    modifier = Modifier.padding(vertical = 4.dp, horizontal = 8.dp),
-                    text = it.value,
-                    style = TextStyle(
-                        color = MaterialTheme.colorScheme.onBackground,
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                )
-            }
+        lists.forEach {
+            DefineListButton(modifier =
+            Modifier
+                .wrapContentWidth()
+                .height(47.dp)
+                .padding(top = 6.dp, bottom = 6.dp, start = 6.dp, end = 18.dp),
+                it.listIcon, it.listName, onClick = { onClick(it) })
         }
+    }
+}
+
+@Composable
+fun DefineListButton(
+    modifier: Modifier,
+    data: String,
+    text: String,
+    onClick: () -> Unit = {}
+) {
+    val request =
+        ImageRequest.Builder(LocalContext.current)
+            .decoderFactory(SvgDecoder.Factory())
+            .data(data = data)
+            .build()
+    Button(
+        modifier = modifier,
+        onClick = { onClick() },
+        contentPadding = PaddingValues(4.dp),
+        shape = RoundedCornerShape(12.dp),
+        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
+    ) {
+        DictionaryAsyncImage(request = request, Modifier.padding(vertical = 4.dp), 40.dp)
+        Text(
+            modifier = Modifier.padding(vertical = 4.dp, horizontal = 8.dp),
+            text = text,
+            style = TextStyle(
+                color = MaterialTheme.colorScheme.onBackground,
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Bold
+            ),
+            overflow = TextOverflow.Ellipsis
+        )
     }
 }
 
@@ -207,9 +284,7 @@ fun CardWordCreation(
                 colors = CardDefaults.cardColors(containerColor = color)
             ) {
                 Text(
-                    modifier = Modifier.padding(16.dp),
-                    text = it,
-                    style = TextStyle(
+                    modifier = Modifier.padding(16.dp), text = it, style = TextStyle(
                         color = MaterialTheme.colorScheme.onBackground,
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold
@@ -222,8 +297,7 @@ fun CardWordCreation(
 
 @Composable
 fun TitleWordCreation(
-    icon: Int,
-    title: String
+    icon: Int, title: String
 ) {
     Row(
         modifier = Modifier.padding(vertical = 12.dp, horizontal = 18.dp),
@@ -237,8 +311,7 @@ fun TitleWordCreation(
         )
         Spacer(modifier = Modifier.width(12.dp))
         Text(
-            text = title,
-            style = TextStyle(
+            text = title, style = TextStyle(
                 color = MaterialTheme.colorScheme.onBackground,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold
@@ -248,38 +321,38 @@ fun TitleWordCreation(
 }
 
 @Composable
-fun ConstraintLayoutScope.DictionaryTextField(
+fun DictionaryTextField(
     hint: String,
-    ref: ConstrainedLayoutReference,
+    onValueChange: (String) -> Unit,
     onClick: () -> Unit,
     onSizeChanged: (Dp) -> Unit,
-    wordsItemsVisible: Boolean
+    list: ListModel?
 ) {
-    var text by remember {
+    var text by rememberSaveable {
         mutableStateOf("")
     }
     val localDensity = LocalDensity.current
 
-    BasicTextField(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(
-                shape = RoundedCornerShape(12.dp),
-                color = MaterialTheme.colorScheme.primaryContainer
-            )
-            .constrainAs(ref) { top.linkTo(parent.top) }
-            .onGloballyPositioned { coordinates ->
-                onSizeChanged(with(localDensity) { coordinates.size.height.toDp() })
-            },
-        value = text,
-        onValueChange = { text = it },
-        textStyle = TextStyle(
-            color = MaterialTheme.colorScheme.onBackground,
-            fontSize = 14.sp,
-            fontWeight = FontWeight.Black
-        ),
-        cursorBrush = Brush.linearGradient(listOf(MaterialTheme.colorScheme.onBackground, MaterialTheme.colorScheme.onBackground))
-    ) { innerTextField ->
+    BasicTextField(modifier = Modifier
+        .fillMaxWidth()
+        .background(
+            shape = RoundedCornerShape(12.dp),
+            color = MaterialTheme.colorScheme.primaryContainer
+        )
+        .onGloballyPositioned { coordinates ->
+            onSizeChanged(with(localDensity) { coordinates.size.height.toDp() })
+        }, value = text, onValueChange = {
+            text = it
+            onValueChange(text)
+         }, textStyle = TextStyle(
+        color = MaterialTheme.colorScheme.onBackground,
+        fontSize = 14.sp,
+        fontWeight = FontWeight.Black
+    ), cursorBrush = Brush.linearGradient(
+        listOf(
+            MaterialTheme.colorScheme.onBackground, MaterialTheme.colorScheme.onBackground
+        )
+    )) { innerTextField ->
         Box(
             modifier = Modifier.padding(18.dp),
         ) {
@@ -300,33 +373,25 @@ fun ConstraintLayoutScope.DictionaryTextField(
                     innerTextField()
                     if (text.isEmpty()) {
                         Text(
-                            text = hint,
-                            style = TextStyle(
-                                color = MaterialTheme.colorScheme.onBackground,
-                                fontSize = 14.sp
+                            text = hint, style = TextStyle(
+                                color = MaterialTheme.colorScheme.onBackground, fontSize = 14.sp
                             )
                         )
                     }
                 }
-                Button(
+                DefineListButton(
                     modifier = Modifier
                         .constrainAs(button) {
                             start.linkTo(box.end)
                             end.linkTo(parent.end)
-                            width = Dimension.value(50.dp)
-                            height = Dimension.value(30.dp)
+                            height = Dimension.value(36.dp)
                         }
-                        .padding(start = 10.dp),
-                    onClick = { onClick() },
-                    contentPadding = PaddingValues(0.dp),
-                    shape = RoundedCornerShape(12.dp),
-                ) {
-                    Icon(
-                        imageVector = if (!wordsItemsVisible) Icons.Default.Add else Icons.Default.KeyboardArrowDown,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onPrimary
-                    )
-                }
+                        .widthIn(max = 170.dp),
+                    data = list?.listIcon ?: "",
+                    text = list?.listName ?: "Списков нет!",
+                    onClick = { onClick() }
+                )
+
             }
         }
     }

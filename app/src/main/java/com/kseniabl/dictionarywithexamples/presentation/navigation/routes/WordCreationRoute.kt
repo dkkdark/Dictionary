@@ -15,9 +15,9 @@ fun NavController.navigateToWordCreation(route: String = WordCreationScreen, nav
     this.navigate(route, navOptions)
 }
 
-fun NavGraphBuilder.wordCreation(padding: PaddingValues, topBarChanged: (TopBarState) -> Unit) {
+fun NavGraphBuilder.wordCreation(padding: PaddingValues, topBarChanged: (TopBarState) -> Unit, toMainScreen: () -> Unit) {
     composable(route = WordCreationScreen) {
         topBarChanged(TopBarState(false, "Новое слово"))
-        CreateWord(padding)
+        CreateWord(padding, toMainScreen = { toMainScreen() })
     }
 }

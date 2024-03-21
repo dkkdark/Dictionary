@@ -48,6 +48,9 @@ fun DictionaryNavHost(
             padding,
             topBarChanged = {
                 topBarChanged(it)
+            },
+            toMainScreen = {
+                navController.navigateToMain()
             }
         )
     }

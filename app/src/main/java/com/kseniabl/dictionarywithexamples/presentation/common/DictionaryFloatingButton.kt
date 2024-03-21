@@ -14,9 +14,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kseniabl.dictionarywithexamples.R
@@ -24,12 +27,17 @@ import com.kseniabl.dictionarywithexamples.R
 @Composable
 fun ColumnScope.DictionaryFloatingButton(
     text: String,
+    onSizeChanged: (Dp) -> Unit = {},
     onClick: () -> Unit
 ) {
+    val localDensity = LocalDensity.current
+
     ExtendedFloatingActionButton(
         modifier = Modifier
             .padding(10.dp)
-            .align(Alignment.End),
+            .align(Alignment.End)
+            .onGloballyPositioned { coordinates ->
+                onSizeChanged(with(localDensity) { coordinates.size.height.toDp() })},
         onClick = { onClick() },
         containerColor = MaterialTheme.colorScheme.primary
     ) {

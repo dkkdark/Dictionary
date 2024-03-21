@@ -5,6 +5,7 @@ import androidx.compose.ui.graphics.Color
 val Selected = Color(0xFF373C42)
 
 val DarkOnBackground = Color(0xFFe2e2e9)
+val LighterBaseContainer = Color(0xFF2D3035)
 val BaseContainer = Color(0xFF1D2024)
 val DarkBackground = Color(0xFF111318)
 

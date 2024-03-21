@@ -164,7 +164,7 @@ fun CreateListField(
         value = text,
         onValueChange = {
             text = it
-            if (text.length >= 3) valueChanged(text)
+            if (text.length >= 3) valueChanged(it)
         },
         textStyle = TextStyle(
             color = MaterialTheme.colorScheme.onBackground,
@@ -214,7 +214,7 @@ fun IconsList(
         colors = CardDefaults.cardColors(containerColor =
         if (chosenIcon != icon) MaterialTheme.colorScheme.primaryContainer else Selected)
     ) {
-        DictionaryAsyncImage(request = request)
+        DictionaryAsyncImage(request = request, modifier = Modifier.padding(8.dp), size = 38.dp)
     }
 
 }
